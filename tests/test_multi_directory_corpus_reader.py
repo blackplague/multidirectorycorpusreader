@@ -3,7 +3,7 @@ from typing import List
 import os
 import pytest
 
-from multidirectorycorpusreader.multi_directory_corpus_reader import MultiDirectoryCorpusReader
+from multidirectorycorpusreader.multidirectorycorpusreader import MultiDirectoryCorpusReader
 
 @pytest.fixture
 def default_sources_mdcr():
