@@ -15,7 +15,7 @@ class MultiDirectoryCorpusReader:
     def __init__(self,
                  input_dirs: List[str],
                  glob_filters: List[str],
-                 preprocessor_func: Optional[Callable[[str], List[str]]]=None,
+                 preprocessor_func: Optional[Callable[[str], List[List[str]]]]=None,
                  print_progress: bool=False):
         """MultiDictionaryCorpusReader
 
