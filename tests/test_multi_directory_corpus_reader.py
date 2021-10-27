@@ -3,12 +3,12 @@ from typing import List
 import os
 import pytest
 
-from multi_directory_corpus_reader import MultiDirectoryCorpusReader
+from multidirectorycorpusreader.multi_directory_corpus_reader import MultiDirectoryCorpusReader
 
 @pytest.fixture
 def default_sources_mdcr():
-    source1 = 'test/data/source1'
-    source2 = 'test/data/source2'
+    source1 = 'tests/data/source1'
+    source2 = 'tests/data/source2'
 
     mdcr = MultiDirectoryCorpusReader(input_dirs=[source1, source2], glob_filters=['*.txt', '*.msg'])
     yield source1, source2, mdcr
