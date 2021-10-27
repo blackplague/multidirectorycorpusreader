@@ -34,7 +34,8 @@ class MultiDirectoryCorpusReader:
            ├─ file3.txt
            └─ file4.text
 
-        mdcr = MultiDirectoryCorpusReader(input_dirs=['data/source1', 'data/source2'], glob_filters=['*.txt', '*.msg', '*.doc', '*.text'])
+        mdcr = MultiDirectoryCorpusReader(input_dirs=['data/source1', 'data/source2'],
+                                          glob_filters=['*.txt', '*.msg', '*.doc', '*.text'])
 
         The above provides an iterator that yields the text content of all files ending with txt,
         msg, doc and text in the source1 and source2 directories. In addition it supports passing
@@ -65,10 +66,10 @@ class MultiDirectoryCorpusReader:
                 content = fd.read()
                 if content == '':
                     continue
-                if self.preprocessor_func:
-                    yield self.preprocessor_func(content)
-                else:
+                if self.preprocessor_func is None:
                     yield content
+                else:
+                    yield self.preprocessor_func(content)
 
     def __len__(self):
         return len(self.files)
