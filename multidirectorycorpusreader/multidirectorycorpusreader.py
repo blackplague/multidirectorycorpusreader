@@ -67,6 +67,13 @@ class MultiDirectoryCorpusReader:
                 logging.info('Reading files into memory, please wait...')
             self._files = list(self._files)
 
+    @property
+    def files(self):
+        return self._filenames
+
+    def __len__(self):
+        return len(self._filenames)
+
     def __iter__(self):
         for i, file_content in enumerate(self._files):
             if self.print_progress and i > 0 and i % 10000 == 0:
@@ -83,9 +90,3 @@ class MultiDirectoryCorpusReader:
             content = fd.read()
             return content
 
-    def __len__(self):
-        return len(self._filenames)
-
-    @property
-    def files(self):
-        return self._filenames
