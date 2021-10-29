@@ -7,7 +7,7 @@ import os
 import logging
 
 logging.basicConfig(
-    format='%(asctime)s : %(levelname)s : %(message)s',
+    format='%(asctime)s:%(levelname)s: %(message)s',
     level=logging.INFO)
 
 
@@ -16,6 +16,7 @@ class MultiDirectoryCorpusReader:
                  input_dirs: List[str],
                  glob_filters: List[str],
                  preprocessor_func: Optional[Callable[[str], List[str]]]=None,
+                 in_memory: bool=False,
                  print_progress: bool=False):
         """MultiDictionaryCorpusReader
 
@@ -56,25 +57,35 @@ class MultiDirectoryCorpusReader:
         """
         self.print_progress = print_progress
         self.preprocessor_func = preprocessor_func
-        self._files = list(chain(*[glob(os.path.join(p, gf)) for p, gf in product(input_dirs, glob_filters)]))
-        logging.info(f'Found #{len(self.files)} files')
+        self._filenames = list(chain(*[glob(os.path.join(p, gf)) for p, gf in product(input_dirs, glob_filters)]))
+        if self.print_progress:
+            logging.info(f'Found #{len(self.files)} files')
+        # Generator expression (delayed file reading)
+        self._files = (self._read_file(f) for f in self._filenames)
+        if in_memory:
+            if self.print_progress:
+                logging.info('Reading files into memory, please wait...')
+            self._files = list(self._files)
 
     def __iter__(self):
-        for i, f in enumerate(self.files):
+        for i, file_content in enumerate(self._files):
             if self.print_progress and i > 0 and i % 10000 == 0:
-                logging.info(f"Read {i} files")
-            with open(f, 'r') as fd:
-                content = fd.read()
-                if content == '':
-                    continue
-                if self.preprocessor_func is None:
-                    yield content
-                else:
-                    yield self.preprocessor_func(content)
+                logging.info(f"Read #{i} files")
+            if file_content == '':
+                continue
+            if self.preprocessor_func is None:
+                yield file_content
+            else:
+                yield self.preprocessor_func(file_content)
+
+    def _read_file(self, filename: str) -> str:
+        with open(filename, 'r') as fd:
+            content = fd.read()
+            return content
 
     def __len__(self):
-        return len(self.files)
+        return len(self._filenames)
 
     @property
     def files(self):
-        return self._files
+        return self._filenames
