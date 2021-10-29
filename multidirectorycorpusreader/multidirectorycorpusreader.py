@@ -1,5 +1,6 @@
 from glob import glob
 from itertools import chain, product
+import multiprocessing as mp
 from typing import Callable, List, Optional
 
 
@@ -52,8 +53,6 @@ class MultiDirectoryCorpusReader:
             glob_filters=['*.txt', '*.msg', '*.doc', '*.text'],
             preprocess_func=simple_preprocess,
             print_progress=True)
-
-
         """
         self.print_progress = print_progress
         self.preprocessor_func = preprocessor_func
@@ -66,7 +65,9 @@ class MultiDirectoryCorpusReader:
         if self.in_memory:
             if self.print_progress:
                 logging.info('Reading files into memory, please wait...')
-            self._files = list(self._read_files_gen())
+            num_workers = mp.cpu_count() - 1
+            pool = mp.Pool(processes=num_workers)
+            self._files = sorted(pool.map(self._read_file, self.files))
 
     @property
     def files(self):
