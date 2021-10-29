@@ -57,15 +57,16 @@ class MultiDirectoryCorpusReader:
         """
         self.print_progress = print_progress
         self.preprocessor_func = preprocessor_func
+        self.in_memory = in_memory
         self._filenames = list(chain(*[glob(os.path.join(p, gf)) for p, gf in product(input_dirs, glob_filters)]))
         if self.print_progress:
             logging.info(f'Found #{len(self.files)} files')
         # Generator expression (delayed file reading)
-        self._files = (self._read_file(f) for f in self._filenames)
-        if in_memory:
+        # self._files = (self._read_file(f) for f in self._filenames)
+        if self.in_memory:
             if self.print_progress:
                 logging.info('Reading files into memory, please wait...')
-            self._files = list(self._files)
+            self._files = list(self._read_files_gen())
 
     @property
     def files(self):
@@ -75,6 +76,9 @@ class MultiDirectoryCorpusReader:
         return len(self._filenames)
 
     def __iter__(self):
+        if not self.in_memory:
+            self._files = self._read_files_gen()
+
         for i, file_content in enumerate(self._files):
             if self.print_progress and i > 0 and i % 10000 == 0:
                 logging.info(f"Read #{i} files")
@@ -85,8 +89,10 @@ class MultiDirectoryCorpusReader:
             else:
                 yield self.preprocessor_func(file_content)
 
+    def _read_files_gen(self):
+        return (self._read_file(f) for f in self.files)
+
     def _read_file(self, filename: str) -> str:
         with open(filename, 'r') as fd:
             content = fd.read()
             return content
-
