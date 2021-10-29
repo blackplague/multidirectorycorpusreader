@@ -58,7 +58,6 @@ def test_read_single_file_streaming():
     source = 'tests/data/source1'
     glob_filter = '1.txt'
 
-
     with open(f'{source}/{glob_filter}', 'r') as fd:
         expected_result = fd.read()
 
@@ -67,10 +66,10 @@ def test_read_single_file_streaming():
 
     assert expected_result == result
 
+
 def test_read_single_file_in_memory():
     source = 'tests/data/source1'
     glob_filter = '1.txt'
-
 
     with open(f'{source}/{glob_filter}', 'r') as fd:
         expected_result = fd.read()
