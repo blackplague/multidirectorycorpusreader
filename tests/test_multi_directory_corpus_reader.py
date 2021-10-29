@@ -52,3 +52,30 @@ def test_preprocessor_func(default_sources_mdcr):
     for res in mdcr:
         assert len(res) > 0
         assert all(['a' not in token for token in res])
+
+
+def test_read_single_file():
+    source = 'tests/data/source1'
+    glob_filter = '1.txt'
+
+
+    with open(f'{source}/{glob_filter}', 'r') as fd:
+        expected_result = fd.read()
+
+    mdcr = MultiDirectoryCorpusReader(input_dirs=[source], glob_filters=[glob_filter])
+    result = next(iter(mdcr))
+
+    assert expected_result == result
+
+def test_read_single_file_in_memory():
+    source = 'tests/data/source1'
+    glob_filter = '1.txt'
+
+
+    with open(f'{source}/{glob_filter}', 'r') as fd:
+        expected_result = fd.read()
+
+    mdcr = MultiDirectoryCorpusReader(input_dirs=[source], glob_filters=[glob_filter], in_memory=True)
+    result = next(iter(mdcr))
+
+    assert expected_result == result
