@@ -54,7 +54,7 @@ def test_preprocessor_func(default_sources_mdcr):
         assert all(['a' not in token for token in res])
 
 
-def test_read_single_file():
+def test_read_single_file_streaming():
     source = 'tests/data/source1'
     glob_filter = '1.txt'
 
