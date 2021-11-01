@@ -14,9 +14,9 @@ logging.basicConfig(
 
 class MultiDirectoryCorpusReader:
     def __init__(self,
-                 input_dirs: List[str],
+                 source_directories: List[str],
                  glob_filters: List[str],
-                 preprocessor_func: Optional[Callable[[str], List[str]]]=None,
+                 preprocess_function: Optional[Callable[[str], List[str]]]=None,
                  in_memory: bool=False,
                  print_progress: bool=False):
         """MultiDictionaryCorpusReader
@@ -55,9 +55,9 @@ class MultiDirectoryCorpusReader:
             print_progress=True)
         """
         self.print_progress = print_progress
-        self.preprocessor_func = preprocessor_func
+        self.preprocess_function = preprocess_function
         self.in_memory = in_memory
-        self._filenames = list(chain(*[glob(os.path.join(p, gf)) for p, gf in product(input_dirs, glob_filters)]))
+        self._filenames = list(chain(*[glob(os.path.join(p, gf)) for p, gf in product(source_directories, glob_filters)]))
         if self.print_progress:
             logging.info(f'Found #{len(self.files)} files')
         # Generator expression (delayed file reading)
@@ -85,10 +85,10 @@ class MultiDirectoryCorpusReader:
                 logging.info(f"Read #{i} files")
             if file_content == '':
                 continue
-            if self.preprocessor_func is None:
+            if self.preprocess_function is None:
                 yield file_content
             else:
-                yield self.preprocessor_func(file_content)
+                yield self.preprocess_function(file_content)
 
     def _read_files_gen(self):
         return (self._read_file(f) for f in self.files)

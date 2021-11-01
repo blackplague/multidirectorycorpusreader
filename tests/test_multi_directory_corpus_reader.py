@@ -11,7 +11,7 @@ def default_sources_mdcr():
     source1 = 'tests/data/source1'
     source2 = 'tests/data/source2'
 
-    mdcr = MultiDirectoryCorpusReader(input_dirs=[source1, source2], glob_filters=['*.txt', '*.msg'])
+    mdcr = MultiDirectoryCorpusReader(source_directories=[source1, source2], glob_filters=['*.txt', '*.msg'])
     yield source1, source2, mdcr
 
 
@@ -45,9 +45,9 @@ def test_preprocessor_func(default_sources_mdcr):
         return s.replace('a', '').split(' ')
 
     mdcr = MultiDirectoryCorpusReader(
-        input_dirs=[source1, source2],
+        source_directories=[source1, source2],
         glob_filters=['*.txt', '*.msg'],
-        preprocessor_func=preprocessor_tokenize_remove_a)
+        preprocess_function=preprocessor_tokenize_remove_a)
     # Test that all tokenized documents have a length larger than 0 and that none of the tokens contains 'a'
     for res in mdcr:
         assert len(res) > 0
@@ -61,9 +61,9 @@ def test_read_single_file_streaming():
     with open(f'{source}/{glob_filter}', 'r') as fd:
         expected_result = fd.read()
 
-    mdcr = MultiDirectoryCorpusReader(input_dirs=[source], glob_filters=[glob_filter])
     result = next(iter(mdcr))
 
+    mdcr = MultiDirectoryCorpusReader(source_directories=[source], glob_filters=[glob_filter])
     assert expected_result == result
 
 
@@ -74,9 +74,9 @@ def test_read_single_file_in_memory():
     with open(f'{source}/{glob_filter}', 'r') as fd:
         expected_result = fd.read()
 
-    mdcr = MultiDirectoryCorpusReader(input_dirs=[source], glob_filters=[glob_filter], in_memory=True)
     result = next(iter(mdcr))
 
+    mdcr = MultiDirectoryCorpusReader(source_directories=[source], glob_filters=[glob_filter], in_memory=True)
     assert expected_result == result
 
 
@@ -87,8 +87,8 @@ def test_repeatability_in_memory():
     with open(f'{source}/{glob_filter}', 'r') as fd:
         expected_result = fd.read()
 
-    mdcr = MultiDirectoryCorpusReader(input_dirs=[source], glob_filters=[glob_filter], in_memory=True)
 
+    mdcr = MultiDirectoryCorpusReader(source_directories=[source], glob_filters=[glob_filter], in_memory=True)
     mdcr_iter = iter(mdcr)
     result = next(mdcr_iter)
 
@@ -107,8 +107,8 @@ def test_repeatability_streaming():
     with open(f'{source}/{glob_filter}', 'r') as fd:
         expected_result = fd.read()
 
-    mdcr = MultiDirectoryCorpusReader(input_dirs=[source], glob_filters=[glob_filter], in_memory=False)
 
+    mdcr = MultiDirectoryCorpusReader(source_directories=[source], glob_filters=[glob_filter], in_memory=False)
     mdcr_iter = iter(mdcr)
     result = next(mdcr_iter)
 
