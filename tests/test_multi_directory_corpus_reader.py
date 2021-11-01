@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterator, List, Union
 
 import os
 import pytest
@@ -21,7 +21,7 @@ def test_initialization(default_sources_mdcr):
     expected_result: List[str] = sorted([os.path.join(source1, p) for p in os.listdir(source1)]
                                         + [os.path.join(source2, p) for p in os.listdir(source2)]) # noqa W503
 
-    result = sorted(mdcr.files)
+    result: List[str] = sorted(mdcr.files)
 
     assert expected_result == result
     assert len(expected_result) == len(result)
@@ -34,7 +34,6 @@ def test_len_dunder(default_sources_mdcr):
                                       + [os.path.join(source2, p) for p in os.listdir(source2)])) # noqa W503
 
     result: int = len(mdcr)
-
     assert expected_result == result
 
 
@@ -59,11 +58,10 @@ def test_read_single_file_streaming():
     glob_filter = '1.txt'
 
     with open(f'{source}/{glob_filter}', 'r') as fd:
-        expected_result = fd.read()
-
-    result = next(iter(mdcr))
+        expected_result: str = fd.read()
 
     mdcr = MultiDirectoryCorpusReader(source_directories=[source], glob_filters=[glob_filter])
+    result: Union[str, List[str]] = next(iter(mdcr))
     assert expected_result == result
 
 
@@ -72,11 +70,10 @@ def test_read_single_file_in_memory():
     glob_filter = '1.txt'
 
     with open(f'{source}/{glob_filter}', 'r') as fd:
-        expected_result = fd.read()
-
-    result = next(iter(mdcr))
+        expected_result: str = fd.read()
 
     mdcr = MultiDirectoryCorpusReader(source_directories=[source], glob_filters=[glob_filter], in_memory=True)
+    result: Union[str, List[str]] = next(iter(mdcr))
     assert expected_result == result
 
 
@@ -85,18 +82,16 @@ def test_repeatability_in_memory():
     glob_filter = '1.txt'
 
     with open(f'{source}/{glob_filter}', 'r') as fd:
-        expected_result = fd.read()
-
+        expected_result: str = fd.read()
 
     mdcr = MultiDirectoryCorpusReader(source_directories=[source], glob_filters=[glob_filter], in_memory=True)
-    mdcr_iter = iter(mdcr)
-    result = next(mdcr_iter)
 
+    mdcr_iter: Iterator[Union[str, List[str]]] = iter(mdcr)
+    result: Union[str, List[str]] = next(mdcr_iter)
     assert expected_result == result
 
-    mdcr_iter = iter(mdcr)
-    new_result = next(mdcr_iter)
-
+    mdcr_iter: Iterator[Union[str, List[str]]] = iter(mdcr)
+    new_result: Union[str, List[str]] = next(mdcr_iter)
     assert expected_result == new_result
 
 
@@ -105,16 +100,14 @@ def test_repeatability_streaming():
     glob_filter = '1.txt'
 
     with open(f'{source}/{glob_filter}', 'r') as fd:
-        expected_result = fd.read()
-
+        expected_result: str = fd.read()
 
     mdcr = MultiDirectoryCorpusReader(source_directories=[source], glob_filters=[glob_filter], in_memory=False)
-    mdcr_iter = iter(mdcr)
-    result = next(mdcr_iter)
 
+    mdcr_iter: Iterator[Union[str, List[str]]] = iter(mdcr)
+    result: Union[str, List[str]] = next(mdcr_iter)
     assert expected_result == result
 
-    mdcr_iter = iter(mdcr)
-    new_result = next(mdcr_iter)
-
+    mdcr_iter: Iterator[Union[str, List[str]]] = iter(mdcr)
+    new_result: Union[str, List[str]] = next(mdcr_iter)
     assert expected_result == new_result

@@ -1,7 +1,7 @@
 from glob import glob
 from itertools import chain, product
 import multiprocessing as mp
-from typing import Callable, List, Optional
+from typing import Callable, Generator, Iterator, List, Optional, Union
 
 
 import os
@@ -70,13 +70,13 @@ class MultiDirectoryCorpusReader:
             self._files = sorted(pool.map(self._read_file, self.files))
 
     @property
-    def files(self):
+    def files(self) -> List[str]:
         return self._filenames
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._filenames)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Union[str, List[str]]]:
         if not self.in_memory:
             self._files = self._read_files_gen()
 
@@ -90,7 +90,7 @@ class MultiDirectoryCorpusReader:
             else:
                 yield self.preprocess_function(file_content)
 
-    def _read_files_gen(self):
+    def _read_files_gen(self) -> Generator[str, None, None]:
         return (self._read_file(f) for f in self.files)
 
     def _read_file(self, filename: str) -> str:
