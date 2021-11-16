@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Iterator, List, Union
 
 import os
@@ -111,3 +112,29 @@ def test_repeatability_streaming():
     mdcr_iter: Iterator[Union[str, List[str]]] = iter(mdcr)
     new_result: Union[str, List[str]] = next(mdcr_iter)
     assert expected_result == new_result
+
+
+def test_recursive():
+    source2 = 'tests/data/source2'
+    source3 = 'tests/data/source3'
+    source3_sub1 = os.path.join(source3, 'source3a')
+    source3_sub2 = os.path.join(source3, 'source3b')
+    source3_sub21 = os.path.join(source3_sub2, 'source3ba')
+    glob_filters = ['*.msg', '*.txt']
+
+    mdcr = MultiDirectoryCorpusReader(
+        source_directories=[source2, source3],
+        glob_filters=glob_filters,
+        recursive=True)
+
+    result: List[str] = sorted(mdcr.files)
+
+    expected_result: List[str] = sorted([os.path.join(source2, p) for p in os.listdir(source2)]
+                                        + [os.path.join(source3, p) for p in os.listdir(source3)]
+                                        + [os.path.join(source3_sub1, p) for p in os.listdir(source3_sub1)]
+                                        + [os.path.join(source3_sub2, p) for p in os.listdir(source3_sub2)]
+                                        + [os.path.join(source3_sub21, p) for p in os.listdir(source3_sub21)]) # noqa W503
+    expected_result = list(filter(lambda f: Path(f).is_file(), expected_result))
+
+    assert expected_result == result
+    assert len(expected_result) == len(result)

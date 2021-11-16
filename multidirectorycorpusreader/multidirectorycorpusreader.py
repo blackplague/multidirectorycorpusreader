@@ -1,6 +1,7 @@
 from glob import glob
 from itertools import chain, product
 import multiprocessing as mp
+from pathlib import Path
 from typing import Callable, Generator, Iterator, List, Optional, Union
 
 
@@ -77,12 +78,16 @@ class MultiDirectoryCorpusReader:
                  glob_filters: List[str],
                  preprocess_function: Optional[Callable[[str], List[str]]]=None,
                  in_memory: bool=False,
+                 recursive: bool=False,
                  print_progress: bool=False):
 
         self.print_progress = print_progress
         self.preprocess_function = preprocess_function
         self.in_memory = in_memory
-        self._filenames = list(chain(*[glob(os.path.join(p, gf)) for p, gf in product(source_directories, glob_filters)]))
+        if recursive:
+            self._filenames = self._recursive(source_directories=source_directories, glob_filters=glob_filters)
+        else:
+            self._filenames = self._non_recursive(source_directories=source_directories, glob_filters=glob_filters)
         if self.print_progress:
             logging.info(f'Found #{len(self.files)} files')
         if self.in_memory:
@@ -135,3 +140,11 @@ class MultiDirectoryCorpusReader:
         with open(filename, 'r') as fd:
             content = fd.read()
             return content
+
+    def _non_recursive(self, source_directories, glob_filters) -> List[str]:
+        """Maybe also a bit too convoluted"""
+        return list(map(str, chain(*[Path(path).glob(ext) for path in source_directories for ext in glob_filters])))
+
+    def _recursive(self, source_directories, glob_filters) -> List[str]:
+        """Maybe a bit to convoluted"""
+        return list(map(str, chain(*[Path(path).rglob(ext) for path in source_directories for ext in glob_filters])))
