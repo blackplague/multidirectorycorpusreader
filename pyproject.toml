@@ -1,8 +1,14 @@
 [tool.poetry]
 name = "multidirectorycorpusreader"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
-authors = ["Michael Andersen <gosuckadeadcow@gmail.com>"]
+authors = ["Michael Andersen <michael10andersen+mdcr@gmail.com>"]
+license = "lgpl-3.0"
+readme = "README.md"
+packages = [ { include = "multidirectorycorpusreader" } ]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/blackplague/multidirectorycorpusreader/issues"
 
 [tool.poetry.dependencies]
 python = "^3.7"
