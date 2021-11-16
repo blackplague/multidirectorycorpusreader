@@ -52,6 +52,8 @@ mdcr = MultiDirectoryCorpusReader(
 
 ## Release History
 
+* 0.2.1
+  * Makes the MultiDirectoryCorpusReader available through ```from multidirectorycorpusreader import MultiDirectoryCorpusReader```
 * 0.2.0
   * The first proper release
 
