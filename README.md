@@ -59,7 +59,7 @@ mdcr = MultiDirectoryCorpusReader(
 
 Michael Andersen - michael10andersen+mdcr -[at]- gmail.com - [Github](https://github.com/blackplague/)
 
-Distributed under the XYZ license. See ``LICENSE`` for more information.
+Distributed under the LGPL3 license. See ``LICENSE`` for more information.
 
 <!-- Markdown link & img dfn's -->
 [gensim-url]: https://radimrehurek.com/gensim/
