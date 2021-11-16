@@ -1,0 +1,1 @@
+from multidirectorycorpusreader.multidirectorycorpusreader import MultiDirectoryCorpusReader
