@@ -5,6 +5,7 @@ description = ""
 authors = ["Michael Andersen <michael10andersen+mdcr@gmail.com>"]
 license = "lgpl-3.0"
 readme = "README.md"
+repository = "https://github.com/blackplague/multidirectorycorpusreader"
 packages = [ { include = "multidirectorycorpusreader" } ]
 
 [tool.poetry.urls]
