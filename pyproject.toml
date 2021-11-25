@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "multidirectorycorpusreader"
-version = "0.2.1"
+version = "0.2.2"
 description = ""
 authors = ["Michael Andersen <michael10andersen+mdcr@gmail.com>"]
 license = "lgpl-3.0"
