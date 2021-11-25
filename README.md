@@ -11,6 +11,12 @@ It can be installed directly from github using:
 #> python -m pip install git+https://github.com/blackplague/multidirectorycorpusreader.git
 ```
 
+or via pip using:
+
+```sh
+pip install multidirectorycorpusreader
+```
+
 ## Usage example
 
 The minimum viable usage is to supply a list of source directories and a list of globbing filters.
@@ -19,6 +25,14 @@ The minimum viable usage is to supply a list of source directories and a list of
 mdcr = MultiDirectoryCorpusReader(
     source_directories=['data/source1', 'data/source2'],
     glob_filters=['*.txt', '*.msg', '*.doc', '*.text'])
+```
+
+This will make it possible to iterate through the content of files located in `data/source1` and
+`data/source2` having the extensions `txt`, `msg`, `doc` and `text` in the following manner
+
+```python
+for file_content in mdcr:
+  print(f'File content: {file_content}')
 ```
 
 It is possible to pass a preprocess function to the script, this could for example be the
@@ -52,6 +66,8 @@ mdcr = MultiDirectoryCorpusReader(
 
 ## Release History
 
+* 0.2.2
+  * Improved README.md with better example code and installation directions for pip installation
 * 0.2.1
   * Makes the MultiDirectoryCorpusReader available through ```from multidirectorycorpusreader import MultiDirectoryCorpusReader```
 * 0.2.0
