@@ -66,6 +66,8 @@ mdcr = MultiDirectoryCorpusReader(
 
 ## Release History
 
+* 0.2.3
+  * Unifies \_non\_recursive(...) and \_recursive(...) function to \_globber instead.
 * 0.2.2
   * Improved README.md with better example code and installation directions for pip installation
 * 0.2.1

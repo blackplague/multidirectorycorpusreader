@@ -6,7 +6,7 @@ README = (FILE_LOCATION / 'README.md').read_text()
 
 setup(
     name='MultiDirectoryCorpusReader',
-    version='0.2.2',
+    version='0.2.3',
     description='Easier multi directory source globbing of text files',
     long_description=README,
     long_description_content_type='text/markdown',
