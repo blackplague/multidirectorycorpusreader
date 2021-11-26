@@ -84,10 +84,10 @@ class MultiDirectoryCorpusReader:
         self.print_progress = print_progress
         self.preprocess_function = preprocess_function
         self.in_memory = in_memory
-        if recursive:
-            self._filenames = self._recursive(source_directories=source_directories, glob_filters=glob_filters)
-        else:
-            self._filenames = self._non_recursive(source_directories=source_directories, glob_filters=glob_filters)
+        self._filenames = self._globber(
+            source_directories=source_directories,
+            glob_filters=glob_filters,
+            recursive=recursive)
         if self.print_progress:
             logging.info(f'Found #{len(self.files)} files')
         if self.in_memory:
@@ -141,10 +141,26 @@ class MultiDirectoryCorpusReader:
             content = fd.read()
             return content
 
-    def _non_recursive(self, source_directories, glob_filters) -> List[str]:
-        """Maybe also a bit too convoluted"""
-        return list(map(str, chain(*[Path(path).glob(ext) for path in source_directories for ext in glob_filters])))
+    def _globber(self, source_directories: List[str], glob_filters: List[str], recursive: bool) -> List[str]:
+        """Performs globbing either recursive or non recursive on source_directories over all
+           glob_filters
 
-    def _recursive(self, source_directories, glob_filters) -> List[str]:
-        """Maybe a bit to convoluted"""
-        return list(map(str, chain(*[Path(path).rglob(ext) for path in source_directories for ext in glob_filters])))
+        Parameters
+        ----------
+        source_directories : List[str]
+            Source directories on which to perform globbing
+        glob_filters : List[str]
+            Which globbing filters to use on source_directories, these are typically similar to
+            '*.txt'.
+        recursive : bool
+            Determines whether or not to recurse through all sub-directories of each source
+            directory found in source_directories
+
+        Returns
+        -------
+            A list of all files found in all source_directories matching each globbing filter. This
+            applies recursively to each sub-folder if recursive is True
+        """
+        def globber(path, ext):
+            return Path(path).rglob(ext) if recursive else Path(path).glob(ext)
+        return list(map(str, chain(*[globber(path, ext) for path in source_directories for ext in glob_filters])))
